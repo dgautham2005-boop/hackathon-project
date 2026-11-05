@@ -20,7 +20,12 @@ def matrix(obs):
         return result
     snapshot = datetime.fromisoformat(obs['snapshot'])
     grouped = {cid: [] for cid in ids}
+    seen = set()
     for r in obs['transactions']['rows']:
+        key = tuple(r[:8])
+        if key in seen:
+            continue
+        seen.add(key)
         if r[6] in grouped and obs.get('history_start', '') <= r[4] < obs['observed_until']:
             grouped[r[6]].append(r)
     result = []
@@ -75,7 +80,7 @@ def fit(cases, processor):
     mean, scale = x.mean(axis=0), x.std(axis=0)
     scale[scale < 1e-8] = 1.
     x = np.column_stack([np.ones(len(x)), (x-mean)/scale])
-    penalty = np.eye(10)*RIDGE
+    penalty = np.eye(x.shape[1])*RIDGE
     penalty[0, 0] = 0.
     coefficients = np.linalg.solve(x.T@x+penalty, x.T@y)
     return {'mean': mean.tolist(), 'scale': scale.tolist(), 'coefficients': coefficients.tolist()}
