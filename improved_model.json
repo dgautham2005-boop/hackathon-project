@@ -1,0 +1,13 @@
+{
+  "model_type": "simple_ridge",
+  "parameters": {
+    "prob_coef": [
+      0.0
+    ],
+    "prob_intercept": 0.5,
+    "val_coef": [
+      0.0
+    ],
+    "val_intercept": 0.0
+  }
+}
